@@ -893,6 +893,23 @@ h1, h2, h3, h4 {
   border-color: var(--color-brand);
 }
 
+.founders-story {
+  max-width: 760px;
+  margin: 0 auto 48px;
+  text-align: center;
+  font-size: 17px;
+  color: var(--color-text-secondary);
+  line-height: 1.85;
+}
+
+.founder-bio {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.75;
+  margin-top: 16px;
+  text-align: left;
+}
+
 .founder-avatar {
   width: 160px;
   height: 160px;

@@ -894,16 +894,17 @@ h1, h2, h3, h4 {
 }
 
 .founder-avatar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
+  width: 160px;
+  height: 160px;
+  border-radius: var(--radius);
   background: linear-gradient(150deg, #8AAFBD, #A8C4D0);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 24px;
-  border: 3px solid var(--color-white);
+  border: 3px solid var(--color-brand-light);
   box-shadow: var(--shadow-md);
+  overflow: hidden;
 }
 
 .founder-avatar img {
@@ -915,13 +916,13 @@ h1, h2, h3, h4 {
 
 .founder-avatar span {
   font-family: var(--font-heading);
-  font-size: 28px;
+  font-size: 40px;
   font-weight: 700;
   color: var(--color-white);
 }
 
 .founder-card h3 {
-  font-size: 22px;
+  font-size: 24px;
   color: var(--color-dark);
   margin-bottom: 8px;
 }

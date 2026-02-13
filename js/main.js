@@ -14,12 +14,15 @@ function initNavigation() {
   const navLinks = document.getElementById('navLinks');
   const links = navLinks.querySelectorAll('a');
 
-  // Scroll-based nav background
+  // Scroll-based nav background (skip on pages with nav-solid)
+  const isSolidNav = nav.classList.contains('nav-solid');
   function updateNav() {
-    if (window.scrollY > 50) {
-      nav.classList.add('scrolled');
-    } else {
-      nav.classList.remove('scrolled');
+    if (!isSolidNav) {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
     }
   }
 

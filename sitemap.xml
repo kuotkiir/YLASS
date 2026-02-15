@@ -2,12 +2,72 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://ylass.org/</loc>
-    <lastmod>2026-02-13</lastmod>
+    <lastmod>2026-02-15</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://ylass.org/resources.html</loc>
     <lastmod>2026-02-13</lastmod>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ylass.org/students/kuot-kiir-aluetmiir.html</loc>
+    <lastmod>2026-02-15</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ylass.org/students/ghai-tit-buny.html</loc>
+    <lastmod>2026-02-15</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ylass.org/students/santino-makuei-marial.html</loc>
+    <lastmod>2026-02-15</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ylass.org/students/yor-daniel-chol.html</loc>
+    <lastmod>2026-02-15</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ylass.org/students/didi-ding-mayen-kuai.html</loc>
+    <lastmod>2026-02-15</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ylass.org/students/majok-thiong.html</loc>
+    <lastmod>2026-02-15</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ylass.org/students/majok-anyieth.html</loc>
+    <lastmod>2026-02-15</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ylass.org/students/aluk-bak-barnaba-chol.html</loc>
+    <lastmod>2026-02-15</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ylass.org/students/wol-bol-wol.html</loc>
+    <lastmod>2026-02-15</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ylass.org/students/abouch-bol-akot.html</loc>
+    <lastmod>2026-02-15</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ylass.org/students/julia-agum-mangar-bol.html</loc>
+    <lastmod>2026-02-15</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ylass.org/students/nyariay-kic.html</loc>
+    <lastmod>2026-02-15</lastmod>
+    <priority>0.7</priority>
   </url>
 </urlset>

@@ -653,20 +653,24 @@ h1, h2, h3, h4 {
 .university-tag {
   padding: 10px 24px;
   background: var(--color-bg-tint);
-  border: 1px solid var(--color-border);
+  border: 2px solid var(--uni-color, var(--color-border));
+  border-left: 4px solid var(--uni-color, var(--color-brand));
   border-radius: 50px;
   font-size: 14px;
   font-weight: 600;
-  color: var(--color-dark);
+  color: var(--uni-color, var(--color-dark));
   transition: all var(--transition);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 }
 
 .university-tag:hover {
-  background: var(--color-brand);
-  color: var(--color-dark);
-  border-color: var(--color-brand);
+  background: var(--uni-color, var(--color-brand));
+  color: var(--color-white);
+  border-color: var(--uni-color, var(--color-brand));
   transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .impact-vision h3 {
@@ -841,6 +845,13 @@ h1, h2, h3, h4 {
   letter-spacing: 1.2px;
   color: var(--color-brand-deeper);
   margin-bottom: 6px;
+  text-decoration: none;
+  display: block;
+  transition: color var(--transition);
+}
+
+a.student-university:hover {
+  color: var(--color-dark);
 }
 
 .student-name {

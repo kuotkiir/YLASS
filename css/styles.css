@@ -842,6 +842,122 @@ h1, h2, h3, h4 {
   color: var(--color-dark);
 }
 
+/* Student Name Links */
+.student-name a {
+  color: var(--color-brand-deeper);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.student-name a:hover {
+  color: var(--color-dark);
+  text-decoration: underline;
+}
+
+.student-card.memorial .student-name a {
+  color: var(--color-memorial);
+}
+
+.student-card.memorial .student-name a:hover {
+  color: var(--color-dark);
+}
+
+/* --- Student Bio Page --- */
+.student-bio-page {
+  padding-top: calc(var(--nav-height) + 48px);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-brand-deeper);
+  text-decoration: none;
+  margin-bottom: 40px;
+  transition: color var(--transition);
+}
+
+.back-link:hover {
+  color: var(--color-dark);
+}
+
+.student-bio-header {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 40px;
+}
+
+.student-bio-header .student-photo {
+  width: 140px;
+  height: 140px;
+  flex-shrink: 0;
+  margin-bottom: 0;
+}
+
+.student-bio-details .student-university {
+  margin-bottom: 8px;
+}
+
+.student-bio-name {
+  font-size: clamp(24px, 3.5vw, 36px);
+  color: var(--color-dark);
+  margin-bottom: 6px;
+}
+
+.student-bio-details .student-school {
+  margin-bottom: 0;
+  font-size: 15px;
+}
+
+.student-bio-content {
+  max-width: 720px;
+  font-size: 17px;
+  color: var(--color-text-secondary);
+  line-height: 1.85;
+}
+
+.student-bio-content p {
+  margin-bottom: 16px;
+}
+
+.student-bio-content .student-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-brand-deeper);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.student-bio-content .student-link:hover {
+  color: var(--color-dark);
+}
+
+.student-bio-memorial {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-memorial);
+  font-style: italic;
+  margin-top: 8px;
+}
+
+@media (max-width: 768px) {
+  .student-bio-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+  }
+
+  .student-bio-page {
+    padding-top: calc(var(--nav-height) + 24px);
+  }
+}
+
 /* Memorial Card */
 .student-card.memorial {
   border-color: rgba(139, 76, 90, 0.2);

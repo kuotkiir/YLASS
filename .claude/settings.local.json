@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.google.com)",
+      "Bash(open:*)",
+      "WebFetch(domain:kuotkiir.com)",
+      "Bash(find:*)",
+      "Bash(git init:*)",
+      "Bash(gh auth:*)",
+      "Bash(brew install:*)",
+      "Bash(git --version:*)",
+      "Bash(git config:*)",
+      "Bash(ssh:*)",
+      "Bash(sudo cp:*)",
+      "Bash(chmod:*)",
+      "Bash(/usr/local/bin/gh:*)",
+      "Bash(~/bin/gh auth login:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(~/bin/gh repo create:*)",
+      "Bash(~/bin/gh api repos/kuotkiir/YLASS/pages -X POST -f \"build_type=workflow\" -f \"source[branch]=main\" -f \"source[path]=/\")",
+      "Bash(~/bin/gh api:*)",
+      "Bash(1 <<'JSON'\n{\"build_type\":\"legacy\",\"source\":{\"branch\":\"main\",\"path\":\"/\"}}\nJSON)",
+      "Bash(git push:*)",
+      "Bash(python3:*)",
+      "WebFetch(domain:ylass.org)",
+      "WebSearch",
+      "WebFetch(domain:www.eyeradio.org)",
+      "WebFetch(domain:rocketreach.co)",
+      "WebFetch(domain:paanluelwel.com)",
+      "WebFetch(domain:students.dartmouth.edu)",
+      "WebFetch(domain:www.linkedin.com)",
+      "WebFetch(domain:storage.googleapis.com)",
+      "WebFetch(domain:sites.dartmouth.edu)"
+    ]
+  }
+}

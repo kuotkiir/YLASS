@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/jpeg" href="images/ylass-logo.jpg">
+  <link rel="apple-touch-icon" href="images/ylass-logo.jpg">
+  <title>Messages — YLASS Student Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/portal.css">
+</head>
+<body>
+  <nav class="nav nav-solid" id="nav">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="images/ylass-logo.jpg" alt="YLASS" class="logo-img">
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="schools.html">Schools</a></li>
+        <li><a href="messages.html" class="active">Messages</a></li>
+        <li><a href="#" id="navLogout">Log Out</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div id="loadingState" class="portal-loading">
+    <div class="spinner"></div>
+    <p>Loading messages...</p>
+  </div>
+
+  <section class="section dashboard-section" id="messagesContent" style="display:none;">
+    <div class="container">
+      <h1 class="dashboard-greeting">Messages</h1>
+      <p class="dashboard-cohort">Communicate with your mentors</p>
+
+      <!-- Conversations List (Admin view) -->
+      <div class="conversations-list" id="conversationsList" style="display:none;"></div>
+
+      <!-- Messages Thread -->
+      <div class="messages-thread">
+        <div class="messages-list" id="messagesList">
+          <p class="docs-empty">No messages yet. Send a message to your mentor below.</p>
+        </div>
+        <form class="message-compose" id="composeForm">
+          <textarea id="messageInput" class="message-input" placeholder="Type your message..." rows="3"></textarea>
+          <button type="submit" class="btn-portal" style="width:auto;padding:10px 24px;">Send</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 Young Leaders Academy of South Sudan. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/messages.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

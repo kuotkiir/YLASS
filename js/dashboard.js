@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const doc = await db.collection('students').doc(user.uid).get();
       if (!doc.exists) {
-        // Create doc if missing (e.g., admin logging in for first time)
         await db.collection('students').doc(user.uid).set({
           name: user.displayName || user.email,
           email: user.email,
@@ -34,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
         studentDoc = doc.data();
       }
 
-      // Update last active
       db.collection('students').doc(user.uid).update({
         lastActive: firebase.firestore.FieldValue.serverTimestamp()
       });
@@ -56,7 +54,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderDashboard() {
-    // Greeting
     const name = studentDoc.name ? studentDoc.name.split(' ')[0] : 'Student';
     document.getElementById('greetingText').textContent = `Welcome back, ${name}`;
     document.getElementById('cohortText').textContent = `${studentDoc.cohortName} — ${studentDoc.classYear}`;
@@ -70,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
       navLinks.insertBefore(adminLi, logoutLi);
     }
 
-    // Render checklist
+    // Render checklist with deadlines
     const grid = document.getElementById('checklistGrid');
     const progress = studentDoc.progress || PROGRESS_TEMPLATE;
     let totalItems = 0;
@@ -91,26 +88,36 @@ document.addEventListener('DOMContentLoaded', () => {
           <span class="checklist-count">${catDone}/${items.length}</span>
         </div>
         <ul class="checklist-items">
-          ${items.map(item => `
+          ${items.map(item => {
+            const deadlineClass = getDeadlineClass(item.deadline, item.done);
+            return `
             <li class="checklist-item ${item.done ? 'done' : ''}">
               <label class="checklist-label">
                 <input type="checkbox" class="checklist-checkbox" data-category="${category}" data-id="${item.id}" ${item.done ? 'checked' : ''}>
                 <span class="checkmark"></span>
                 <span class="checklist-text">${item.label}</span>
               </label>
-            </li>
-          `).join('')}
+              <div class="checklist-deadline-row">
+                <input type="date" class="deadline-input ${deadlineClass}" data-category="${category}" data-id="${item.id}" value="${item.deadline || ''}">
+                ${item.deadline && !item.done ? `<span class="deadline-label ${deadlineClass}">${formatDeadline(item.deadline)}</span>` : ''}
+              </div>
+            </li>`;
+          }).join('')}
         </ul>
       `;
       grid.appendChild(card);
     }
 
-    // Update progress ring
     updateProgressRing(totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0);
 
     // Attach checkbox listeners
     grid.querySelectorAll('.checklist-checkbox').forEach(cb => {
       cb.addEventListener('change', handleCheckboxChange);
+    });
+
+    // Attach deadline listeners
+    grid.querySelectorAll('.deadline-input').forEach(input => {
+      input.addEventListener('change', handleDeadlineChange);
     });
 
     // Notes
@@ -124,6 +131,50 @@ document.addEventListener('DOMContentLoaded', () => {
     dashboardContent.style.display = 'block';
   }
 
+  function getDeadlineClass(deadline, done) {
+    if (!deadline || done) return '';
+    const now = new Date();
+    const dl = new Date(deadline);
+    const daysLeft = Math.ceil((dl - now) / (1000 * 60 * 60 * 24));
+    if (daysLeft < 0) return 'overdue';
+    if (daysLeft <= 7) return 'due-soon';
+    return '';
+  }
+
+  function formatDeadline(deadline) {
+    const now = new Date();
+    const dl = new Date(deadline);
+    const daysLeft = Math.ceil((dl - now) / (1000 * 60 * 60 * 24));
+    if (daysLeft < 0) return `${Math.abs(daysLeft)}d overdue`;
+    if (daysLeft === 0) return 'Due today';
+    if (daysLeft === 1) return 'Due tomorrow';
+    if (daysLeft <= 7) return `${daysLeft}d left`;
+    return dl.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  async function handleDeadlineChange(e) {
+    const input = e.target;
+    const category = input.dataset.category;
+    const itemId = input.dataset.id;
+    const deadline = input.value;
+
+    const items = studentDoc.progress[category];
+    const item = items.find(i => i.id === itemId);
+    if (item) item.deadline = deadline;
+
+    try {
+      await db.collection('students').doc(currentUser.uid).update({
+        progress: studentDoc.progress,
+        lastActive: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    } catch (err) {
+      console.error('Error saving deadline:', err);
+    }
+
+    // Re-render to update deadline labels
+    renderDashboard();
+  }
+
   // --- Document Upload ---
   document.getElementById('fileInput').addEventListener('change', async (e) => {
     const file = e.target.files[0];
@@ -132,7 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusEl = document.getElementById('uploadStatus');
     const category = document.getElementById('docCategory').value;
 
-    // Validate file size (1MB max)
     if (file.size > 1048576) {
       statusEl.textContent = 'File too large. Maximum size is 1MB.';
       statusEl.className = 'upload-status error';
@@ -141,7 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Validate file type
     const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
     if (!validTypes.includes(file.type)) {
       statusEl.textContent = 'Invalid file type. Use PDF, JPG, PNG, or DOC.';
@@ -156,10 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
     statusEl.style.display = 'block';
 
     try {
-      // Convert file to base64
       const base64 = await fileToBase64(file);
-
-      // Save to Firestore as a subcollection document
       await db.collection('students').doc(currentUser.uid).collection('documents').add({
         name: file.name,
         category: category,
@@ -172,15 +218,12 @@ document.addEventListener('DOMContentLoaded', () => {
       statusEl.textContent = 'Uploaded successfully!';
       statusEl.className = 'upload-status success';
       setTimeout(() => statusEl.style.display = 'none', 3000);
-
-      // Refresh documents list
       renderDocuments();
     } catch (err) {
       console.error('Upload error:', err);
       statusEl.textContent = 'Upload failed. Please try again.';
       statusEl.className = 'upload-status error';
     }
-
     e.target.value = '';
   });
 
@@ -206,7 +249,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Group by category
       const grouped = {};
       snapshot.docs.forEach(doc => {
         const d = { id: doc.id, ...doc.data() };
@@ -243,12 +285,9 @@ document.addEventListener('DOMContentLoaded', () => {
         listEl.appendChild(section);
       }
 
-      // Attach download handlers
       listEl.querySelectorAll('.doc-download').forEach(btn => {
         btn.addEventListener('click', () => downloadDocument(btn.dataset.id));
       });
-
-      // Attach delete handlers
       listEl.querySelectorAll('.doc-delete').forEach(btn => {
         btn.addEventListener('click', () => deleteDocument(btn.dataset.id));
       });
@@ -301,20 +340,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const itemId = checkbox.dataset.id;
     const isChecked = checkbox.checked;
 
-    // Update local data
     const items = studentDoc.progress[category];
     const item = items.find(i => i.id === itemId);
     if (item) item.done = isChecked;
 
-    // Toggle done class
     checkbox.closest('.checklist-item').classList.toggle('done', isChecked);
 
-    // Update count for this category
     const card = checkbox.closest('.checklist-card');
     const catDone = items.filter(i => i.done).length;
     card.querySelector('.checklist-count').textContent = `${catDone}/${items.length}`;
 
-    // Update overall progress
     let total = 0, completed = 0;
     for (const cat of Object.values(studentDoc.progress)) {
       total += cat.length;
@@ -322,7 +357,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     updateProgressRing(total > 0 ? Math.round((completed / total) * 100) : 0);
 
-    // Save to Firestore
     try {
       await db.collection('students').doc(currentUser.uid).update({
         progress: studentDoc.progress,

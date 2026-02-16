@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/jpeg" href="images/ylass-logo.jpg">
+  <link rel="apple-touch-icon" href="images/ylass-logo.jpg">
+  <title>School List — YLASS Student Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/portal.css">
+</head>
+<body>
+  <nav class="nav nav-solid" id="nav">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="images/ylass-logo.jpg" alt="YLASS" class="logo-img">
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="schools.html" class="active">Schools</a></li>
+        <li><a href="messages.html">Messages</a></li>
+        <li><a href="#" id="navLogout">Log Out</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div id="loadingState" class="portal-loading">
+    <div class="spinner"></div>
+    <p>Loading school list...</p>
+  </div>
+
+  <section class="section dashboard-section" id="schoolsContent" style="display:none;">
+    <div class="container">
+      <div class="dashboard-header">
+        <div>
+          <h1 class="dashboard-greeting">My School List</h1>
+          <p class="dashboard-cohort">Track your target universities, deadlines, and results</p>
+        </div>
+        <button class="btn-portal" id="addSchoolBtn" style="width:auto;padding:10px 24px;">+ Add School</button>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="school-summary" id="schoolSummary">
+        <div class="admin-stat-card">
+          <span class="admin-stat-number" id="totalSchools">0</span>
+          <span class="admin-stat-label">Schools</span>
+        </div>
+        <div class="admin-stat-card">
+          <span class="admin-stat-number" id="acceptedCount">0</span>
+          <span class="admin-stat-label">Accepted</span>
+        </div>
+        <div class="admin-stat-card">
+          <span class="admin-stat-number" id="pendingCount">0</span>
+          <span class="admin-stat-label">Pending</span>
+        </div>
+        <div class="admin-stat-card">
+          <span class="admin-stat-number" id="totalAid">$0</span>
+          <span class="admin-stat-label">Total Aid Offered</span>
+        </div>
+      </div>
+
+      <!-- Schools List -->
+      <div id="schoolsList" class="schools-list"></div>
+
+      <!-- Add/Edit School Modal -->
+      <div class="modal-overlay" id="schoolModal" style="display:none;">
+        <div class="modal-content">
+          <button class="modal-close" id="schoolModalClose">&times;</button>
+          <h2 class="modal-student-name" id="schoolModalTitle">Add School</h2>
+          <form id="schoolForm">
+            <div class="form-group">
+              <label for="schoolName">University Name</label>
+              <input type="text" id="schoolName" required placeholder="e.g. Stanford University">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="schoolDeadline">Application Deadline</label>
+                <input type="date" id="schoolDeadline">
+              </div>
+              <div class="form-group">
+                <label for="schoolType">Deadline Type</label>
+                <select id="schoolType" class="doc-category-select">
+                  <option value="ED">Early Decision</option>
+                  <option value="EA">Early Action</option>
+                  <option value="RD" selected>Regular Decision</option>
+                  <option value="Rolling">Rolling</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="schoolStatus">Status</label>
+              <select id="schoolStatus" class="doc-category-select">
+                <option value="Researching">Researching</option>
+                <option value="Applying" selected>Applying</option>
+                <option value="Submitted">Submitted</option>
+                <option value="Accepted">Accepted</option>
+                <option value="Waitlisted">Waitlisted</option>
+                <option value="Denied">Denied</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="schoolAid">Scholarship / Aid Offered ($)</label>
+                <input type="number" id="schoolAid" placeholder="0">
+              </div>
+              <div class="form-group">
+                <label for="schoolAidType">Aid Type</label>
+                <select id="schoolAidType" class="doc-category-select">
+                  <option value="">Not yet</option>
+                  <option value="Full Scholarship">Full Scholarship</option>
+                  <option value="Partial Scholarship">Partial Scholarship</option>
+                  <option value="Need-Based">Need-Based Aid</option>
+                  <option value="Merit">Merit Scholarship</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="schoolNotes">Notes</label>
+              <textarea id="schoolNotes" class="notes-textarea" style="min-height:80px;" placeholder="Essay requirements, interview dates, etc."></textarea>
+            </div>
+            <input type="hidden" id="schoolEditId">
+            <button type="submit" class="btn-portal">Save School</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 Young Leaders Academy of South Sudan. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/schools.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

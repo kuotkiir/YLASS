@@ -29,40 +29,58 @@ const ADMIN_EMAILS = [
   'info@ylass.org'
 ];
 
-// Progress checklist template
+// Progress checklist template with deadlines
 const PROGRESS_TEMPLATE = {
   'SAT Preparation': [
-    { id: 'sat-register', label: 'Register for SAT', done: false },
-    { id: 'sat-khan', label: 'Complete Khan Academy SAT prep', done: false },
-    { id: 'sat-practice1', label: 'Take practice test 1', done: false },
-    { id: 'sat-practice2', label: 'Take practice test 2', done: false },
-    { id: 'sat-exam', label: 'Take SAT exam', done: false }
+    { id: 'sat-register', label: 'Register for SAT', done: false, deadline: '' },
+    { id: 'sat-khan', label: 'Complete Khan Academy SAT prep', done: false, deadline: '' },
+    { id: 'sat-practice1', label: 'Take practice test 1', done: false, deadline: '' },
+    { id: 'sat-practice2', label: 'Take practice test 2', done: false, deadline: '' },
+    { id: 'sat-exam', label: 'Take SAT exam', done: false, deadline: '' }
   ],
   'TOEFL Preparation': [
-    { id: 'toefl-register', label: 'Register for TOEFL', done: false },
-    { id: 'toefl-study', label: 'Complete TOEFL study materials', done: false },
-    { id: 'toefl-practice', label: 'Take practice test', done: false },
-    { id: 'toefl-exam', label: 'Take TOEFL exam', done: false }
+    { id: 'toefl-register', label: 'Register for TOEFL', done: false, deadline: '' },
+    { id: 'toefl-study', label: 'Complete TOEFL study materials', done: false, deadline: '' },
+    { id: 'toefl-practice', label: 'Take practice test', done: false, deadline: '' },
+    { id: 'toefl-exam', label: 'Take TOEFL exam', done: false, deadline: '' }
   ],
   'College Applications': [
-    { id: 'app-commonapp', label: 'Create Common App account', done: false },
-    { id: 'app-schoollist', label: 'Finalize school list', done: false },
-    { id: 'app-personal-essay', label: 'Write personal essay', done: false },
-    { id: 'app-supplements', label: 'Write supplemental essays', done: false },
-    { id: 'app-submit', label: 'Submit applications', done: false }
+    { id: 'app-commonapp', label: 'Create Common App account', done: false, deadline: '' },
+    { id: 'app-schoollist', label: 'Finalize school list', done: false, deadline: '' },
+    { id: 'app-personal-essay', label: 'Write personal essay', done: false, deadline: '' },
+    { id: 'app-supplements', label: 'Write supplemental essays', done: false, deadline: '' },
+    { id: 'app-submit', label: 'Submit applications', done: false, deadline: '' }
   ],
   'Financial Aid': [
-    { id: 'fin-css', label: 'Complete CSS Profile', done: false },
-    { id: 'fin-idoc', label: 'Submit IDOC documents', done: false },
-    { id: 'fin-schoolforms', label: 'Complete school-specific forms', done: false }
+    { id: 'fin-css', label: 'Complete CSS Profile', done: false, deadline: '' },
+    { id: 'fin-idoc', label: 'Submit IDOC documents', done: false, deadline: '' },
+    { id: 'fin-schoolforms', label: 'Complete school-specific forms', done: false, deadline: '' }
   ],
   'Interviews & Tests': [
-    { id: 'int-initialview', label: 'Complete InitialView interview', done: false },
-    { id: 'int-university', label: 'Complete university interviews', done: false }
+    { id: 'int-initialview', label: 'Complete InitialView interview', done: false, deadline: '' },
+    { id: 'int-university', label: 'Complete university interviews', done: false, deadline: '' }
   ],
   'Documents': [
-    { id: 'doc-transcript', label: 'Request official transcripts', done: false },
-    { id: 'doc-recs', label: 'Request recommendation letters', done: false },
-    { id: 'doc-passport', label: 'Ensure passport is valid', done: false }
+    { id: 'doc-transcript', label: 'Request official transcripts', done: false, deadline: '' },
+    { id: 'doc-recs', label: 'Request recommendation letters', done: false, deadline: '' },
+    { id: 'doc-passport', label: 'Ensure passport is valid', done: false, deadline: '' }
   ]
 };
+
+// Application form fields
+const APPLICATION_FIELDS = [
+  { id: 'fullName', label: 'Full Name', type: 'text', required: true },
+  { id: 'email', label: 'Email Address', type: 'email', required: true },
+  { id: 'phone', label: 'Phone Number', type: 'tel', required: true },
+  { id: 'dob', label: 'Date of Birth', type: 'date', required: true },
+  { id: 'school', label: 'Current/Most Recent School', type: 'text', required: true },
+  { id: 'graduationYear', label: 'Graduation Year', type: 'number', required: true },
+  { id: 'gpa', label: 'GPA or Average Grade', type: 'text', required: true },
+  { id: 'city', label: 'City', type: 'text', required: true },
+  { id: 'country', label: 'Country', type: 'text', required: true },
+  { id: 'whyYlass', label: 'Why do you want to join YLASS?', type: 'textarea', required: true },
+  { id: 'goals', label: 'What are your academic and career goals?', type: 'textarea', required: true },
+  { id: 'activities', label: 'List your extracurricular activities and achievements', type: 'textarea', required: true },
+  { id: 'challenges', label: 'Describe a challenge you have overcome', type: 'textarea', required: false },
+  { id: 'howHeard', label: 'How did you hear about YLASS?', type: 'text', required: false }
+];

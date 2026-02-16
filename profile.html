@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/jpeg" href="images/ylass-logo.jpg">
+  <link rel="apple-touch-icon" href="images/ylass-logo.jpg">
+  <title>My Profile — YLASS Student Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/portal.css">
+</head>
+<body>
+  <nav class="nav nav-solid" id="nav">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="images/ylass-logo.jpg" alt="YLASS" class="logo-img">
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="profile.html" class="active">Profile</a></li>
+        <li><a href="schools.html">Schools</a></li>
+        <li><a href="messages.html">Messages</a></li>
+        <li><a href="#" id="navLogout">Log Out</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div id="loadingState" class="portal-loading">
+    <div class="spinner"></div>
+    <p>Loading profile...</p>
+  </div>
+
+  <section class="section dashboard-section" id="profileContent" style="display:none;">
+    <div class="container">
+      <h1 class="dashboard-greeting">My Profile</h1>
+      <p class="dashboard-cohort" id="cohortText"></p>
+
+      <div class="profile-grid">
+        <div class="profile-card">
+          <h2 class="card-title">Personal Information</h2>
+          <div class="form-group">
+            <label for="profileName">Full Name</label>
+            <input type="text" id="profileName">
+          </div>
+          <div class="form-group">
+            <label for="profileEmail">Email</label>
+            <input type="email" id="profileEmail" disabled>
+          </div>
+          <div class="form-group">
+            <label for="profilePhone">Phone Number</label>
+            <input type="tel" id="profilePhone" placeholder="+1 (555) 000-0000">
+          </div>
+          <div class="form-group">
+            <label for="profileCity">City</label>
+            <input type="text" id="profileCity" placeholder="Juba">
+          </div>
+          <div class="form-group">
+            <label for="profileCountry">Country</label>
+            <input type="text" id="profileCountry" placeholder="South Sudan">
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <h2 class="card-title">Academic Information</h2>
+          <div class="form-group">
+            <label for="profileSchool">Current/Most Recent School</label>
+            <input type="text" id="profileSchool" placeholder="Your high school name">
+          </div>
+          <div class="form-group">
+            <label for="profileGradYear">Graduation Year</label>
+            <input type="number" id="profileGradYear" placeholder="2026">
+          </div>
+          <div class="form-group">
+            <label for="profileGPA">GPA / Average Grade</label>
+            <input type="text" id="profileGPA" placeholder="e.g. 3.8 or A">
+          </div>
+          <div class="form-group">
+            <label for="profileSAT">SAT Score</label>
+            <input type="text" id="profileSAT" placeholder="e.g. 1400">
+          </div>
+          <div class="form-group">
+            <label for="profileTOEFL">TOEFL Score</label>
+            <input type="text" id="profileTOEFL" placeholder="e.g. 105">
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <h2 class="card-title">About Me</h2>
+          <div class="form-group">
+            <label for="profileBio">Short Bio</label>
+            <textarea id="profileBio" class="notes-textarea" placeholder="Tell us about yourself, your interests, and goals..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="profileActivities">Extracurricular Activities</label>
+            <textarea id="profileActivities" class="notes-textarea" placeholder="List your activities, clubs, volunteer work..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-portal" id="saveProfileBtn" style="max-width:200px;margin-top:24px;">Save Profile</button>
+      <span class="notes-saved" id="profileSaved" style="display:none;">Profile saved!</span>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 Young Leaders Academy of South Sudan. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/profile.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

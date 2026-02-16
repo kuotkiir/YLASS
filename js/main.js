@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
   initScrollAnimations();
   initStatsCounter();
+  initDarkMode();
 });
 
 // --- Navigation ---
@@ -132,4 +133,43 @@ function initStatsCounter() {
 
     observer.observe(heroStats);
   }
+}
+
+// --- Dark Mode ---
+function initDarkMode() {
+  const saved = localStorage.getItem('ylass-theme');
+  if (saved === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+
+  // Create toggle button and add to nav
+  const navLinks = document.getElementById('navLinks');
+  if (!navLinks) return;
+
+  const li = document.createElement('li');
+  const btn = document.createElement('button');
+  btn.className = 'dark-mode-toggle';
+  btn.setAttribute('aria-label', 'Toggle dark mode');
+
+  function updateIcon() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    btn.innerHTML = isDark ? '&#9728;' : '&#9789;';
+  }
+
+  updateIcon();
+
+  btn.addEventListener('click', () => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('ylass-theme', 'light');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('ylass-theme', 'dark');
+    }
+    updateIcon();
+  });
+
+  li.appendChild(btn);
+  navLinks.appendChild(li);
 }

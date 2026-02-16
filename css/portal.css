@@ -593,6 +593,21 @@
   font-weight: 600;
 }
 
+.password-msg {
+  display: block;
+  margin-top: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.password-success {
+  color: #166534;
+}
+
+.password-error {
+  color: #991b1b;
+}
+
 /* --- Admin Page --- */
 .admin-section {
   padding-top: calc(var(--nav-height) + 40px);

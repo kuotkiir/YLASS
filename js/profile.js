@@ -72,4 +72,52 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Error saving profile:', err);
     }
   });
+
+  // Change Password
+  document.getElementById('changePasswordBtn').addEventListener('click', async () => {
+    const msgEl = document.getElementById('passwordMsg');
+    const currentPw = document.getElementById('currentPassword').value;
+    const newPw = document.getElementById('newPassword').value;
+    const confirmPw = document.getElementById('confirmPassword').value;
+
+    msgEl.style.display = 'none';
+
+    if (!currentPw || !newPw || !confirmPw) {
+      showPasswordMsg('Please fill in all password fields.', true);
+      return;
+    }
+    if (newPw.length < 6) {
+      showPasswordMsg('New password must be at least 6 characters.', true);
+      return;
+    }
+    if (newPw !== confirmPw) {
+      showPasswordMsg('New passwords do not match.', true);
+      return;
+    }
+
+    try {
+      const credential = firebase.auth.EmailAuthProvider.credential(currentUser.email, currentPw);
+      await currentUser.reauthenticateWithCredential(credential);
+      await currentUser.updatePassword(newPw);
+      document.getElementById('currentPassword').value = '';
+      document.getElementById('newPassword').value = '';
+      document.getElementById('confirmPassword').value = '';
+      showPasswordMsg('Password changed successfully!', false);
+    } catch (err) {
+      if (err.code === 'auth/wrong-password') {
+        showPasswordMsg('Current password is incorrect.', true);
+      } else {
+        showPasswordMsg('Error changing password. Please try again.', true);
+      }
+      console.error('Password change error:', err);
+    }
+  });
+
+  function showPasswordMsg(text, isError) {
+    const msgEl = document.getElementById('passwordMsg');
+    msgEl.textContent = text;
+    msgEl.className = 'password-msg ' + (isError ? 'password-error' : 'password-success');
+    msgEl.style.display = 'inline';
+    setTimeout(() => msgEl.style.display = 'none', 4000);
+  }
 });

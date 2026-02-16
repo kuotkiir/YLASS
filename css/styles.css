@@ -2045,3 +2045,111 @@ a.student-university:hover {
     font-size: 13px;
   }
 }
+
+/* ============================================
+   Dark Mode
+   ============================================ */
+[data-theme="dark"] {
+  --color-brand: #7BAABB;
+  --color-brand-light: #5A8E9F;
+  --color-brand-lighter: #1e3340;
+  --color-brand-pale: #151f26;
+  --color-brand-dark: #8DBDCC;
+  --color-brand-deeper: #9ECAD8;
+
+  --color-dark: #e8ecf0;
+  --color-dark-medium: #c8cdd4;
+  --color-dark-soft: #a8b0ba;
+
+  --color-bg: #0f1318;
+  --color-bg-tint: #161b22;
+  --color-bg-alt: #1c2129;
+  --color-text: #d1d5db;
+  --color-text-secondary: #9ca3af;
+  --color-text-muted: #6b7280;
+  --color-border: #2d333b;
+  --color-white: #0f1318;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark"] .nav.scrolled {
+  background: rgba(15, 19, 24, 0.92);
+}
+
+[data-theme="dark"] .nav-solid {
+  background: rgba(15, 19, 24, 0.92);
+}
+
+[data-theme="dark"] .nav-solid .hamburger,
+[data-theme="dark"] .nav-solid .hamburger::before,
+[data-theme="dark"] .nav-solid .hamburger::after,
+[data-theme="dark"] .nav.scrolled .hamburger,
+[data-theme="dark"] .nav.scrolled .hamburger::before,
+[data-theme="dark"] .nav.scrolled .hamburger::after {
+  background: var(--color-text);
+}
+
+[data-theme="dark"] .footer {
+  background: #0a0d11;
+}
+
+[data-theme="dark"] .page-hero-bg {
+  background: linear-gradient(160deg, #1a2f38 0%, #1e3340 25%, #223a46 50%, #1a2f38 75%, #162730 100%);
+}
+
+[data-theme="dark"] .page-hero-bg::after {
+  background: linear-gradient(to top, var(--color-bg), transparent);
+}
+
+[data-theme="dark"] .resource-badge-free {
+  background: #132a1a;
+  color: #4ade80;
+}
+
+[data-theme="dark"] .resource-badge-freemium {
+  background: #2a1f0a;
+  color: #fbbf24;
+}
+
+@media (max-width: 768px) {
+  [data-theme="dark"] .nav-links {
+    background: rgba(10, 13, 17, 0.98);
+  }
+}
+
+/* --- Dark Mode Toggle --- */
+.dark-mode-toggle {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 50px;
+  cursor: pointer;
+  padding: 6px 12px;
+  font-size: 16px;
+  line-height: 1;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dark-mode-toggle:hover {
+  background: var(--color-bg-tint);
+  border-color: var(--color-brand);
+}
+
+.nav-solid .dark-mode-toggle,
+.nav.scrolled .dark-mode-toggle {
+  border-color: var(--color-border);
+}
+
+@media (max-width: 768px) {
+  .dark-mode-toggle {
+    margin: 8px auto 0;
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.8);
+  }
+}

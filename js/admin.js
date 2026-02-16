@@ -5,7 +5,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const accessDenied = document.getElementById('accessDenied');
   const adminContent = document.getElementById('adminContent');
   const modal = document.getElementById('studentModal');
+  const appModal = document.getElementById('appModal');
   let allStudents = [];
+  let allApplications = [];
   let currentFilter = 'all';
 
   auth.onAuthStateChanged(async user => {
@@ -26,6 +28,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const snapshot = await db.collection('students').orderBy('name').get();
       allStudents = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 
+      // Load applications
+      const appsSnapshot = await db.collection('applications').orderBy('submittedAt', 'desc').get();
+      allApplications = appsSnapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+
       renderAdmin();
     } catch (err) {
       console.error('Error loading admin:', err);
@@ -34,13 +40,21 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Logout
-  const logoutBtn = document.getElementById('navLogout');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', e => {
-      e.preventDefault();
-      auth.signOut().then(() => window.location.href = 'portal.html');
+  document.getElementById('navLogout').addEventListener('click', e => {
+    e.preventDefault();
+    auth.signOut().then(() => window.location.href = 'portal.html');
+  });
+
+  // Admin tabs
+  document.querySelectorAll('.admin-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const tabName = tab.dataset.tab;
+      document.getElementById('studentsTab').style.display = tabName === 'students' ? 'block' : 'none';
+      document.getElementById('applicationsTab').style.display = tabName === 'applications' ? 'block' : 'none';
     });
-  }
+  });
 
   // Cohort filter buttons
   document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -52,36 +66,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Modal close
-  document.getElementById('modalClose').addEventListener('click', () => {
-    modal.style.display = 'none';
-  });
-  modal.addEventListener('click', e => {
-    if (e.target === modal) modal.style.display = 'none';
-  });
+  // Student modal close
+  document.getElementById('modalClose').addEventListener('click', () => modal.style.display = 'none');
+  modal.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
+
+  // App modal close
+  document.getElementById('appModalClose').addEventListener('click', () => appModal.style.display = 'none');
+  appModal.addEventListener('click', e => { if (e.target === appModal) appModal.style.display = 'none'; });
 
   function renderAdmin() {
     renderStudentsTable();
+    renderApplicationsTable();
     loadingState.style.display = 'none';
     adminContent.style.display = 'block';
   }
 
+  // ---- Students Tab ----
   function renderStudentsTable() {
     const filtered = currentFilter === 'all'
       ? allStudents
       : allStudents.filter(s => s.cohort === currentFilter);
 
-    // Stats
     document.getElementById('totalStudents').textContent = filtered.length;
 
     let totalProgress = 0;
-    filtered.forEach(s => {
-      totalProgress += getStudentProgress(s);
-    });
+    filtered.forEach(s => { totalProgress += getStudentProgress(s); });
     const avg = filtered.length > 0 ? Math.round(totalProgress / filtered.length) : 0;
     document.getElementById('avgProgress').textContent = `${avg}%`;
 
-    // Table
     const tbody = document.getElementById('studentsTableBody');
     tbody.innerHTML = '';
 
@@ -112,7 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
       tbody.appendChild(tr);
     });
 
-    // View buttons
     tbody.querySelectorAll('.btn-view').forEach(btn => {
       btn.addEventListener('click', () => showStudentModal(btn.dataset.id));
     });
@@ -129,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return total > 0 ? Math.round((done / total) * 100) : 0;
   }
 
-  function showStudentModal(studentId) {
+  async function showStudentModal(studentId) {
     const student = allStudents.find(s => s.id === studentId);
     if (!student) return;
 
@@ -159,14 +170,12 @@ document.addEventListener('DOMContentLoaded', () => {
       checklistEl.appendChild(section);
     }
 
-    // Load student's documents
+    // Load documents
     const docsEl = document.getElementById('modalDocuments');
     docsEl.innerHTML = '<p style="font-size:0.85rem;color:var(--color-text-muted);">Loading documents...</p>';
-
     try {
       const docsSnapshot = await db.collection('students').doc(studentId)
         .collection('documents').orderBy('uploadedAt', 'desc').get();
-
       if (docsSnapshot.empty) {
         docsEl.innerHTML = '<p style="font-size:0.85rem;color:var(--color-text-muted);">No documents uploaded.</p>';
       } else {
@@ -184,4 +193,111 @@ document.addEventListener('DOMContentLoaded', () => {
 
     modal.style.display = 'flex';
   }
+
+  // ---- Applications Tab ----
+  function renderApplicationsTable() {
+    document.getElementById('totalApps').textContent = allApplications.length;
+    document.getElementById('newApps').textContent = allApplications.filter(a => a.status === 'Submitted').length;
+
+    const tbody = document.getElementById('appsTableBody');
+    tbody.innerHTML = '';
+
+    if (allApplications.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="table-empty">No applications yet</td></tr>';
+      return;
+    }
+
+    allApplications.forEach(app => {
+      const submitted = app.submittedAt
+        ? new Date(app.submittedAt.seconds * 1000).toLocaleDateString()
+        : 'Unknown';
+      const statusClass = app.status === 'Submitted' ? 'status-submitted'
+        : app.status === 'Reviewed' ? 'status-accepted'
+        : app.status === 'Rejected' ? 'status-denied' : 'status-pending';
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td class="td-name">${app.fullName || 'Unknown'}</td>
+        <td>${app.email || ''}</td>
+        <td>${app.school || ''}</td>
+        <td>${submitted}</td>
+        <td><span class="school-status ${statusClass}">${app.status || 'Submitted'}</span></td>
+        <td><button class="btn-view" data-id="${app.id}">View</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    tbody.querySelectorAll('.btn-view').forEach(btn => {
+      btn.addEventListener('click', () => showAppModal(btn.dataset.id));
+    });
+  }
+
+  let currentAppId = null;
+
+  function showAppModal(appId) {
+    const app = allApplications.find(a => a.id === appId);
+    if (!app) return;
+    currentAppId = appId;
+
+    document.getElementById('appModalName').textContent = app.fullName || 'Unknown';
+
+    const details = document.getElementById('appModalDetails');
+    details.innerHTML = `
+      <div class="app-detail-grid">
+        <div class="app-detail"><strong>Email:</strong> ${app.email || 'N/A'}</div>
+        <div class="app-detail"><strong>Phone:</strong> ${app.phone || 'N/A'}</div>
+        <div class="app-detail"><strong>Date of Birth:</strong> ${app.dob || 'N/A'}</div>
+        <div class="app-detail"><strong>Location:</strong> ${app.city || ''}, ${app.country || ''}</div>
+        <div class="app-detail"><strong>School:</strong> ${app.school || 'N/A'}</div>
+        <div class="app-detail"><strong>Graduation Year:</strong> ${app.graduationYear || 'N/A'}</div>
+        <div class="app-detail"><strong>GPA:</strong> ${app.gpa || 'N/A'}</div>
+        <div class="app-detail"><strong>How Heard:</strong> ${app.howHeard || 'N/A'}</div>
+        <div class="app-detail"><strong>Status:</strong> ${app.status || 'Submitted'}</div>
+      </div>
+      <div class="app-essay">
+        <h4>Why YLASS?</h4>
+        <p>${app.whyYlass || 'No response'}</p>
+      </div>
+      <div class="app-essay">
+        <h4>Academic & Career Goals</h4>
+        <p>${app.goals || 'No response'}</p>
+      </div>
+      <div class="app-essay">
+        <h4>Extracurricular Activities</h4>
+        <p>${app.activities || 'No response'}</p>
+      </div>
+      ${app.challenges ? `<div class="app-essay"><h4>Challenge Overcome</h4><p>${app.challenges}</p></div>` : ''}
+    `;
+
+    appModal.style.display = 'flex';
+  }
+
+  // Mark as reviewed
+  document.getElementById('appMarkReviewed').addEventListener('click', async () => {
+    if (!currentAppId) return;
+    try {
+      await db.collection('applications').doc(currentAppId).update({ status: 'Reviewed' });
+      const app = allApplications.find(a => a.id === currentAppId);
+      if (app) app.status = 'Reviewed';
+      renderApplicationsTable();
+      appModal.style.display = 'none';
+    } catch (err) {
+      console.error('Error updating application:', err);
+    }
+  });
+
+  // Mark as rejected
+  document.getElementById('appMarkRejected').addEventListener('click', async () => {
+    if (!currentAppId) return;
+    if (!confirm('Reject this application?')) return;
+    try {
+      await db.collection('applications').doc(currentAppId).update({ status: 'Rejected' });
+      const app = allApplications.find(a => a.id === currentAppId);
+      if (app) app.status = 'Rejected';
+      renderApplicationsTable();
+      appModal.style.display = 'none';
+    } catch (err) {
+      console.error('Error updating application:', err);
+    }
+  });
 });

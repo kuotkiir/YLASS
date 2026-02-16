@@ -14,7 +14,7 @@ service cloud.firestore {
     }
     match /applications/{appId} {
       allow create: if true;
-      allow read: if request.auth != null && isAdmin();
+      allow read, update: if request.auth != null && isAdmin();
     }
   }
 }

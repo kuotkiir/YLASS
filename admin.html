@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-C4DNNLRXXC"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-C4DNNLRXXC');</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/jpeg" href="images/ylass-logo.jpg">
@@ -45,6 +48,15 @@
       <h1 class="admin-title">Admin Dashboard</h1>
       <p class="admin-subtitle">View and manage all student progress</p>
 
+      <!-- Admin Tabs -->
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="students">Students</button>
+        <button class="admin-tab" data-tab="applications">Applications</button>
+      </div>
+
+      <!-- Students Tab -->
+      <div id="studentsTab">
+
       <!-- Cohort Filter -->
       <div class="admin-filters">
         <button class="filter-btn active" data-cohort="all">All Cohorts</button>
@@ -81,6 +93,51 @@
           <tbody id="studentsTableBody">
           </tbody>
         </table>
+      </div>
+
+      </div><!-- end studentsTab -->
+
+      <!-- Applications Tab -->
+      <div id="applicationsTab" style="display:none;">
+        <div class="admin-stats">
+          <div class="admin-stat-card">
+            <span class="admin-stat-number" id="totalApps">0</span>
+            <span class="admin-stat-label">Total Applications</span>
+          </div>
+          <div class="admin-stat-card">
+            <span class="admin-stat-number" id="newApps">0</span>
+            <span class="admin-stat-label">New / Unreviewed</span>
+          </div>
+        </div>
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>School</th>
+                <th>Submitted</th>
+                <th>Status</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody id="appsTableBody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Application Detail Modal -->
+      <div class="modal-overlay" id="appModal" style="display:none;">
+        <div class="modal-content">
+          <button class="modal-close" id="appModalClose">&times;</button>
+          <h2 class="modal-student-name" id="appModalName"></h2>
+          <div id="appModalDetails"></div>
+          <div style="margin-top:20px;display:flex;gap:8px;">
+            <button class="btn-portal" id="appMarkReviewed" style="width:auto;padding:10px 20px;background:#166534;">Mark Reviewed</button>
+            <button class="btn-portal" id="appMarkRejected" style="width:auto;padding:10px 20px;background:#991b1b;">Reject</button>
+          </div>
+        </div>
       </div>
 
       <!-- Student Detail Modal -->

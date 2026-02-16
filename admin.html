@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — YLASS Student Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/portal.css">
+</head>
+<body>
+  <nav class="nav nav-solid" id="nav">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="images/ylass-logo.jpg" alt="YLASS" class="logo-img">
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="dashboard.html">My Dashboard</a></li>
+        <li><a href="admin.html" class="active">Admin</a></li>
+        <li><a href="#" id="navLogout">Log Out</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div id="loadingState" class="portal-loading">
+    <div class="spinner"></div>
+    <p>Loading admin panel...</p>
+  </div>
+
+  <div id="accessDenied" class="portal-loading" style="display:none;">
+    <p class="access-denied-text">Access denied. Admin privileges required.</p>
+    <a href="dashboard.html" class="btn-portal" style="display:inline-block;margin-top:16px;">Go to Dashboard</a>
+  </div>
+
+  <section class="section admin-section" id="adminContent" style="display:none;">
+    <div class="container">
+      <h1 class="admin-title">Admin Dashboard</h1>
+      <p class="admin-subtitle">View and manage all student progress</p>
+
+      <!-- Cohort Filter -->
+      <div class="admin-filters">
+        <button class="filter-btn active" data-cohort="all">All Cohorts</button>
+        <button class="filter-btn" data-cohort="YLASS2027">Class of 2027</button>
+        <button class="filter-btn" data-cohort="YLASS2028">Class of 2028</button>
+        <button class="filter-btn" data-cohort="YLASS2029">Class of 2029</button>
+        <button class="filter-btn" data-cohort="YLASS2030">Class of 2030</button>
+      </div>
+
+      <!-- Summary Stats -->
+      <div class="admin-stats" id="adminStats">
+        <div class="admin-stat-card">
+          <span class="admin-stat-number" id="totalStudents">0</span>
+          <span class="admin-stat-label">Total Students</span>
+        </div>
+        <div class="admin-stat-card">
+          <span class="admin-stat-number" id="avgProgress">0%</span>
+          <span class="admin-stat-label">Avg Progress</span>
+        </div>
+      </div>
+
+      <!-- Students Table -->
+      <div class="admin-table-wrapper">
+        <table class="admin-table" id="studentsTable">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Cohort</th>
+              <th>Progress</th>
+              <th>Last Active</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody id="studentsTableBody">
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Student Detail Modal -->
+      <div class="modal-overlay" id="studentModal" style="display:none;">
+        <div class="modal-content">
+          <button class="modal-close" id="modalClose">&times;</button>
+          <h2 class="modal-student-name" id="modalStudentName"></h2>
+          <p class="modal-student-cohort" id="modalStudentCohort"></p>
+          <div class="modal-checklist" id="modalChecklist"></div>
+          <div class="modal-notes">
+            <h3>Student Notes</h3>
+            <p id="modalNotes" class="modal-notes-text">No notes yet.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 Young Leaders Academy of South Sudan. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

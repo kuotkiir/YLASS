@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — YLASS Student Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/portal.css">
+</head>
+<body>
+  <nav class="nav nav-solid" id="nav">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="images/ylass-logo.jpg" alt="YLASS" class="logo-img">
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="dashboard.html" class="active">Dashboard</a></li>
+        <li><a href="#" id="navLogout">Log Out</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Loading State -->
+  <div id="loadingState" class="portal-loading">
+    <div class="spinner"></div>
+    <p>Loading your dashboard...</p>
+  </div>
+
+  <!-- Dashboard Content -->
+  <section class="section dashboard-section" id="dashboardContent" style="display:none;">
+    <div class="container">
+      <div class="dashboard-header">
+        <div>
+          <h1 class="dashboard-greeting" id="greetingText">Welcome back</h1>
+          <p class="dashboard-cohort" id="cohortText"></p>
+        </div>
+        <div class="dashboard-stats">
+          <div class="stat-circle" id="progressCircle">
+            <svg viewBox="0 0 36 36" class="progress-ring">
+              <path class="progress-ring-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+              <path class="progress-ring-fill" id="progressRingFill" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+            </svg>
+            <span class="stat-percent" id="progressPercent">0%</span>
+          </div>
+          <span class="stat-label">Overall Progress</span>
+        </div>
+      </div>
+
+      <div class="checklist-grid" id="checklistGrid">
+        <!-- Checklist categories rendered by JS -->
+      </div>
+
+      <!-- Notes Section -->
+      <div class="notes-section">
+        <h2 class="notes-title">Personal Notes</h2>
+        <textarea id="notesArea" class="notes-textarea" placeholder="Add notes about your progress, deadlines, or reminders..."></textarea>
+        <button class="btn-save-notes" id="saveNotesBtn">Save Notes</button>
+        <span class="notes-saved" id="notesSaved" style="display:none;">Saved!</span>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 Young Leaders Academy of South Sudan. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

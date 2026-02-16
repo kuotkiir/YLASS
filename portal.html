@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Portal — YLASS</title>
+  <meta name="description" content="YLASS Student Portal — Login or create an account to track your college application progress.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/portal.css">
+</head>
+<body>
+  <nav class="nav nav-solid" id="nav">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="images/ylass-logo.jpg" alt="YLASS" class="logo-img">
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">
+        <span class="hamburger"></span>
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#students">Students</a></li>
+        <li><a href="resources.html">Resources</a></li>
+        <li><a href="portal.html" class="nav-cta">Portal</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="section portal-section">
+    <div class="container">
+      <div class="portal-wrapper">
+        <div class="portal-card">
+          <div class="portal-header">
+            <img src="images/ylass-logo.jpg" alt="YLASS" class="portal-logo">
+            <h1 class="portal-title">Student Portal</h1>
+            <p class="portal-subtitle">Track your college application progress</p>
+          </div>
+
+          <!-- Login Form -->
+          <form id="loginForm" class="portal-form active">
+            <div class="form-group">
+              <label for="loginEmail">Email Address</label>
+              <input type="email" id="loginEmail" required placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+              <label for="loginPassword">Password</label>
+              <input type="password" id="loginPassword" required placeholder="Enter your password">
+            </div>
+            <div id="loginError" class="form-error" style="display:none;"></div>
+            <button type="submit" class="btn-portal" id="loginBtn">Log In</button>
+            <p class="form-switch">Don't have an account? <a href="#" id="showSignup">Sign up</a></p>
+            <p class="form-switch"><a href="#" id="showReset">Forgot password?</a></p>
+          </form>
+
+          <!-- Signup Form -->
+          <form id="signupForm" class="portal-form">
+            <div class="form-group">
+              <label for="signupName">Full Name</label>
+              <input type="text" id="signupName" required placeholder="Your full name">
+            </div>
+            <div class="form-group">
+              <label for="signupEmail">Email Address</label>
+              <input type="email" id="signupEmail" required placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+              <label for="signupPassword">Password</label>
+              <input type="password" id="signupPassword" required minlength="6" placeholder="At least 6 characters">
+            </div>
+            <div class="form-group">
+              <label for="signupCohort">Cohort Code</label>
+              <input type="text" id="signupCohort" required placeholder="e.g. YLASS2028">
+              <span class="form-hint">Enter the cohort code provided by your mentor</span>
+            </div>
+            <div id="signupError" class="form-error" style="display:none;"></div>
+            <button type="submit" class="btn-portal" id="signupBtn">Create Account</button>
+            <p class="form-switch">Already have an account? <a href="#" id="showLogin">Log in</a></p>
+          </form>
+
+          <!-- Password Reset Form -->
+          <form id="resetForm" class="portal-form">
+            <div class="form-group">
+              <label for="resetEmail">Email Address</label>
+              <input type="email" id="resetEmail" required placeholder="your@email.com">
+            </div>
+            <div id="resetError" class="form-error" style="display:none;"></div>
+            <div id="resetSuccess" class="form-success" style="display:none;"></div>
+            <button type="submit" class="btn-portal" id="resetBtn">Send Reset Link</button>
+            <p class="form-switch"><a href="#" id="showLoginFromReset">Back to login</a></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 Young Leaders Academy of South Sudan. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

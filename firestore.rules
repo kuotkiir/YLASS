@@ -6,7 +6,7 @@ service cloud.firestore {
     }
     match /students/{userId}/{document=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
-      allow read: if request.auth != null && isAdmin();
+      allow read, update: if request.auth != null && isAdmin();
     }
     match /messages/{messageId} {
       allow read: if request.auth != null;

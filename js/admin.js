@@ -140,13 +140,17 @@ document.addEventListener('DOMContentLoaded', () => {
     return total > 0 ? Math.round((done / total) * 100) : 0;
   }
 
+  let currentStudentId = null;
+
   async function showStudentModal(studentId) {
     const student = allStudents.find(s => s.id === studentId);
     if (!student) return;
+    currentStudentId = studentId;
 
     document.getElementById('modalStudentName').textContent = student.name || 'Unknown';
     document.getElementById('modalStudentCohort').textContent = `${student.cohortName || ''} — ${student.classYear || student.cohort}`;
     document.getElementById('modalNotes').textContent = student.notes || 'No notes yet.';
+    document.getElementById('adminNotesTextarea').value = student.adminNotes || '';
 
     const checklistEl = document.getElementById('modalChecklist');
     checklistEl.innerHTML = '';
@@ -300,4 +304,79 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Error updating application:', err);
     }
   });
+
+  // Save admin notes
+  document.getElementById('saveAdminNotes').addEventListener('click', async () => {
+    if (!currentStudentId) return;
+    const notes = document.getElementById('adminNotesTextarea').value;
+    const savedEl = document.getElementById('adminNotesSaved');
+    try {
+      await db.collection('students').doc(currentStudentId).update({ adminNotes: notes });
+      const student = allStudents.find(s => s.id === currentStudentId);
+      if (student) student.adminNotes = notes;
+      savedEl.style.display = 'inline';
+      setTimeout(() => savedEl.style.display = 'none', 2000);
+    } catch (err) {
+      console.error('Error saving admin notes:', err);
+    }
+  });
+
+  // Export Students CSV
+  document.getElementById('exportStudentsCSV').addEventListener('click', () => {
+    const filtered = currentFilter === 'all'
+      ? allStudents
+      : allStudents.filter(s => s.cohort === currentFilter);
+
+    const headers = ['Name', 'Email', 'Cohort', 'Progress', 'Last Active', 'Admin Notes'];
+    const rows = filtered.map(s => {
+      const progress = getStudentProgress(s);
+      const lastActive = s.lastActive
+        ? new Date(s.lastActive.seconds * 1000).toLocaleDateString()
+        : 'Never';
+      return [
+        s.name || '',
+        s.email || '',
+        s.classYear || s.cohort || '',
+        progress + '%',
+        lastActive,
+        (s.adminNotes || '').replace(/"/g, '""')
+      ];
+    });
+    downloadCSV(headers, rows, 'ylass-students.csv');
+  });
+
+  // Export Applications CSV
+  document.getElementById('exportAppsCSV').addEventListener('click', () => {
+    const headers = ['Name', 'Email', 'Phone', 'School', 'Graduation Year', 'GPA', 'Status', 'Submitted'];
+    const rows = allApplications.map(a => {
+      const submitted = a.submittedAt
+        ? new Date(a.submittedAt.seconds * 1000).toLocaleDateString()
+        : 'Unknown';
+      return [
+        a.fullName || '',
+        a.email || '',
+        a.phone || '',
+        a.school || '',
+        a.graduationYear || '',
+        a.gpa || '',
+        a.status || 'Submitted',
+        submitted
+      ];
+    });
+    downloadCSV(headers, rows, 'ylass-applications.csv');
+  });
+
+  function downloadCSV(headers, rows, filename) {
+    const escape = v => `"${String(v).replace(/"/g, '""')}"`;
+    const csv = [headers.map(escape).join(',')]
+      .concat(rows.map(r => r.map(escape).join(',')))
+      .join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 });

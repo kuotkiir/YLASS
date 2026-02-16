@@ -78,6 +78,11 @@
         </div>
       </div>
 
+      <!-- Export -->
+      <div style="margin-bottom:16px;text-align:right;">
+        <button class="btn-view" id="exportStudentsCSV" style="padding:8px 18px;">Export CSV</button>
+      </div>
+
       <!-- Students Table -->
       <div class="admin-table-wrapper">
         <table class="admin-table" id="studentsTable">
@@ -108,6 +113,9 @@
             <span class="admin-stat-number" id="newApps">0</span>
             <span class="admin-stat-label">New / Unreviewed</span>
           </div>
+        </div>
+        <div style="margin-bottom:16px;text-align:right;">
+          <button class="btn-view" id="exportAppsCSV" style="padding:8px 18px;">Export CSV</button>
         </div>
         <div class="admin-table-wrapper">
           <table class="admin-table">
@@ -154,6 +162,14 @@
           <div class="modal-notes">
             <h3>Student Notes</h3>
             <p id="modalNotes" class="modal-notes-text">No notes yet.</p>
+          </div>
+          <div class="admin-notes-section">
+            <h3>Admin Notes <span style="font-weight:400;font-size:0.75rem;color:var(--color-text-muted);">(only visible to admins)</span></h3>
+            <textarea id="adminNotesTextarea" class="notes-textarea" placeholder="Add private admin notes about this student..."></textarea>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+              <button class="btn-save-notes" id="saveAdminNotes">Save Admin Notes</button>
+              <span class="notes-saved" id="adminNotesSaved" style="display:none;">Saved!</span>
+            </div>
           </div>
         </div>
       </div>

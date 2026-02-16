@@ -59,6 +59,34 @@
         <!-- Checklist categories rendered by JS -->
       </div>
 
+      <!-- Documents Section -->
+      <div class="documents-section">
+        <h2 class="documents-title">My Documents</h2>
+        <p class="documents-subtitle">Upload important application documents (PDF, JPG, PNG — max 1MB each)</p>
+        <div class="upload-area" id="uploadArea">
+          <div class="upload-categories">
+            <select id="docCategory" class="doc-category-select">
+              <option value="Transcripts">Transcripts</option>
+              <option value="Recommendation Letters">Recommendation Letters</option>
+              <option value="Essays">Essays</option>
+              <option value="Test Scores">Test Scores (SAT/TOEFL)</option>
+              <option value="Passport">Passport / ID</option>
+              <option value="Financial Documents">Financial Documents</option>
+              <option value="Other">Other</option>
+            </select>
+            <label class="upload-btn" for="fileInput">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              Upload File
+            </label>
+            <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display:none;">
+          </div>
+          <div id="uploadStatus" class="upload-status" style="display:none;"></div>
+        </div>
+        <div class="documents-list" id="documentsList">
+          <!-- Documents rendered by JS -->
+        </div>
+      </div>
+
       <!-- Notes Section -->
       <div class="notes-section">
         <h2 class="notes-title">Personal Notes</h2>

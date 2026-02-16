@@ -116,9 +116,183 @@ document.addEventListener('DOMContentLoaded', () => {
     // Notes
     document.getElementById('notesArea').value = studentDoc.notes || '';
 
+    // Documents
+    renderDocuments();
+
     // Show dashboard
     loadingState.style.display = 'none';
     dashboardContent.style.display = 'block';
+  }
+
+  // --- Document Upload ---
+  document.getElementById('fileInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const statusEl = document.getElementById('uploadStatus');
+    const category = document.getElementById('docCategory').value;
+
+    // Validate file size (1MB max)
+    if (file.size > 1048576) {
+      statusEl.textContent = 'File too large. Maximum size is 1MB.';
+      statusEl.className = 'upload-status error';
+      statusEl.style.display = 'block';
+      e.target.value = '';
+      return;
+    }
+
+    // Validate file type
+    const validTypes = ['application/pdf', 'image/jpeg', 'image/png', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+    if (!validTypes.includes(file.type)) {
+      statusEl.textContent = 'Invalid file type. Use PDF, JPG, PNG, or DOC.';
+      statusEl.className = 'upload-status error';
+      statusEl.style.display = 'block';
+      e.target.value = '';
+      return;
+    }
+
+    statusEl.textContent = 'Uploading...';
+    statusEl.className = 'upload-status uploading';
+    statusEl.style.display = 'block';
+
+    try {
+      // Convert file to base64
+      const base64 = await fileToBase64(file);
+
+      // Save to Firestore as a subcollection document
+      await db.collection('students').doc(currentUser.uid).collection('documents').add({
+        name: file.name,
+        category: category,
+        type: file.type,
+        size: file.size,
+        data: base64,
+        uploadedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      statusEl.textContent = 'Uploaded successfully!';
+      statusEl.className = 'upload-status success';
+      setTimeout(() => statusEl.style.display = 'none', 3000);
+
+      // Refresh documents list
+      renderDocuments();
+    } catch (err) {
+      console.error('Upload error:', err);
+      statusEl.textContent = 'Upload failed. Please try again.';
+      statusEl.className = 'upload-status error';
+    }
+
+    e.target.value = '';
+  });
+
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function renderDocuments() {
+    const listEl = document.getElementById('documentsList');
+    listEl.innerHTML = '<p class="docs-loading">Loading documents...</p>';
+
+    try {
+      const snapshot = await db.collection('students').doc(currentUser.uid)
+        .collection('documents').orderBy('uploadedAt', 'desc').get();
+
+      if (snapshot.empty) {
+        listEl.innerHTML = '<p class="docs-empty">No documents uploaded yet.</p>';
+        return;
+      }
+
+      // Group by category
+      const grouped = {};
+      snapshot.docs.forEach(doc => {
+        const d = { id: doc.id, ...doc.data() };
+        if (!grouped[d.category]) grouped[d.category] = [];
+        grouped[d.category].push(d);
+      });
+
+      listEl.innerHTML = '';
+      for (const [category, docs] of Object.entries(grouped)) {
+        const section = document.createElement('div');
+        section.className = 'doc-category-group';
+        section.innerHTML = `
+          <h3 class="doc-category-title">${category}</h3>
+          ${docs.map(d => `
+            <div class="doc-item" data-id="${d.id}">
+              <div class="doc-info">
+                <span class="doc-icon">${getFileIcon(d.type)}</span>
+                <div>
+                  <span class="doc-name">${d.name}</span>
+                  <span class="doc-meta">${formatFileSize(d.size)} — ${d.uploadedAt ? new Date(d.uploadedAt.seconds * 1000).toLocaleDateString() : 'Just now'}</span>
+                </div>
+              </div>
+              <div class="doc-actions">
+                <button class="doc-btn doc-download" data-id="${d.id}" title="Download">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                </button>
+                <button class="doc-btn doc-delete" data-id="${d.id}" title="Delete">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        `;
+        listEl.appendChild(section);
+      }
+
+      // Attach download handlers
+      listEl.querySelectorAll('.doc-download').forEach(btn => {
+        btn.addEventListener('click', () => downloadDocument(btn.dataset.id));
+      });
+
+      // Attach delete handlers
+      listEl.querySelectorAll('.doc-delete').forEach(btn => {
+        btn.addEventListener('click', () => deleteDocument(btn.dataset.id));
+      });
+    } catch (err) {
+      console.error('Error loading documents:', err);
+      listEl.innerHTML = '<p class="docs-empty">Error loading documents.</p>';
+    }
+  }
+
+  async function downloadDocument(docId) {
+    try {
+      const doc = await db.collection('students').doc(currentUser.uid)
+        .collection('documents').doc(docId).get();
+      const data = doc.data();
+      const link = document.createElement('a');
+      link.href = data.data;
+      link.download = data.name;
+      link.click();
+    } catch (err) {
+      console.error('Download error:', err);
+    }
+  }
+
+  async function deleteDocument(docId) {
+    if (!confirm('Delete this document?')) return;
+    try {
+      await db.collection('students').doc(currentUser.uid)
+        .collection('documents').doc(docId).delete();
+      renderDocuments();
+    } catch (err) {
+      console.error('Delete error:', err);
+    }
+  }
+
+  function getFileIcon(type) {
+    if (type === 'application/pdf') return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+    if (type.startsWith('image/')) return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3498db" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+    return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+  }
+
+  function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1048576) return Math.round(bytes / 1024) + ' KB';
+    return (bytes / 1048576).toFixed(1) + ' MB';
   }
 
   async function handleCheckboxChange(e) {

@@ -159,6 +159,29 @@ document.addEventListener('DOMContentLoaded', () => {
       checklistEl.appendChild(section);
     }
 
+    // Load student's documents
+    const docsEl = document.getElementById('modalDocuments');
+    docsEl.innerHTML = '<p style="font-size:0.85rem;color:var(--color-text-muted);">Loading documents...</p>';
+
+    try {
+      const docsSnapshot = await db.collection('students').doc(studentId)
+        .collection('documents').orderBy('uploadedAt', 'desc').get();
+
+      if (docsSnapshot.empty) {
+        docsEl.innerHTML = '<p style="font-size:0.85rem;color:var(--color-text-muted);">No documents uploaded.</p>';
+      } else {
+        docsEl.innerHTML = docsSnapshot.docs.map(d => {
+          const doc = d.data();
+          return `<div class="modal-doc-item">
+            <span class="doc-name">${doc.name}</span>
+            <span class="doc-meta">${doc.category} — ${doc.size ? Math.round(doc.size / 1024) + ' KB' : ''}</span>
+          </div>`;
+        }).join('');
+      }
+    } catch (err) {
+      docsEl.innerHTML = '<p style="font-size:0.85rem;color:var(--color-text-muted);">Could not load documents.</p>';
+    }
+
     modal.style.display = 'flex';
   }
 });

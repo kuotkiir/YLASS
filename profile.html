@@ -42,8 +42,16 @@
 
   <section class="section dashboard-section" id="profileContent" style="display:none;">
     <div class="container">
-      <h1 class="dashboard-greeting">My Profile</h1>
-      <p class="dashboard-cohort" id="cohortText"></p>
+      <!-- Profile Picture -->
+      <div class="profile-pic-section">
+        <div class="profile-pic-wrapper" id="profilePicWrapper">
+          <img id="profilePicImg" src="" alt="Profile" class="profile-pic-img">
+          <div class="profile-pic-overlay">Change Photo</div>
+          <input type="file" id="profilePicInput" accept="image/*" hidden>
+        </div>
+        <h1 class="dashboard-greeting" id="profileGreeting">My Profile</h1>
+        <p class="dashboard-cohort" id="cohortText"></p>
+      </div>
 
       <div class="profile-grid">
         <div class="profile-card">

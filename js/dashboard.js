@@ -58,6 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('greetingText').textContent = `Welcome back, ${name}`;
     document.getElementById('cohortText').textContent = `${studentDoc.cohortName} — ${studentDoc.classYear}`;
 
+    // Profile picture on dashboard
+    const dashPic = document.getElementById('dashboardPic');
+    if (studentDoc.profilePic) {
+      dashPic.src = studentDoc.profilePic;
+      dashPic.style.display = 'block';
+    }
+
     // Show admin link if admin
     if (studentDoc.isAdmin) {
       const navLinks = document.getElementById('navLinks');

@@ -26,6 +26,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderProfile() {
     document.getElementById('cohortText').textContent = `${studentDoc.cohortName || ''} — ${studentDoc.classYear || ''}`;
+    document.getElementById('profileGreeting').textContent = studentDoc.name || 'My Profile';
+
+    // Profile picture
+    const picImg = document.getElementById('profilePicImg');
+    if (studentDoc.profilePic) {
+      picImg.src = studentDoc.profilePic;
+    } else {
+      picImg.src = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><rect fill="%23E4EFF4" width="120" height="120"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="48" fill="%234D8296">' + (studentDoc.name ? studentDoc.name.charAt(0).toUpperCase() : '?') + '</text></svg>');
+    }
 
     const profile = studentDoc.profile || {};
     document.getElementById('profileName').value = studentDoc.name || '';
@@ -71,6 +80,43 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (err) {
       console.error('Error saving profile:', err);
     }
+  });
+
+  // Profile picture upload
+  document.getElementById('profilePicWrapper').addEventListener('click', () => {
+    document.getElementById('profilePicInput').click();
+  });
+
+  document.getElementById('profilePicInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file.');
+      return;
+    }
+
+    if (file.size > 500 * 1024) {
+      alert('Image must be under 500 KB. Please choose a smaller image.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = reader.result;
+      try {
+        await db.collection('students').doc(currentUser.uid).update({
+          profilePic: base64,
+          lastActive: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        document.getElementById('profilePicImg').src = base64;
+        studentDoc.profilePic = base64;
+      } catch (err) {
+        console.error('Error saving profile picture:', err);
+        alert('Error saving profile picture. Please try again.');
+      }
+    };
+    reader.readAsDataURL(file);
   });
 
   // Change Password

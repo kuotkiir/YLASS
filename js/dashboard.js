@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
           cohort: 'YLASS2027',
           cohortName: 'First Cohort',
           classYear: 'Class of 2027',
-          isAdmin: ADMIN_EMAILS.includes(user.email.toLowerCase()),
+          isAdmin: false,
           progress: PROGRESS_TEMPLATE,
           notes: '',
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),

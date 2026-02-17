@@ -89,10 +89,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     errorEl.style.display = 'none';
 
-    const isAdminEmail = ADMIN_EMAILS.includes(email.toLowerCase());
-
-    // Validate cohort code (skip for admin emails)
-    if (!isAdminEmail && !VALID_COHORTS[cohortCode]) {
+    // Validate cohort code
+    if (!VALID_COHORTS[cohortCode]) {
       errorEl.textContent = 'Invalid cohort code. Please check with your mentor.';
       errorEl.style.display = 'block';
       return;
@@ -105,30 +103,21 @@ document.addEventListener('DOMContentLoaded', () => {
       const cred = await auth.createUserWithEmailAndPassword(email, password);
       await cred.user.updateProfile({ displayName: name });
 
-      // Create document in Firestore
-      const studentData = {
+      // Create student document in Firestore
+      await db.collection('students').doc(cred.user.uid).set({
         name: name,
         email: email,
-        isAdmin: isAdminEmail,
+        cohort: cohortCode,
+        cohortName: VALID_COHORTS[cohortCode].name,
+        classYear: VALID_COHORTS[cohortCode].classYear,
+        isAdmin: false,
+        progress: PROGRESS_TEMPLATE,
         notes: '',
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         lastActive: firebase.firestore.FieldValue.serverTimestamp()
-      };
+      });
 
-      if (isAdminEmail) {
-        studentData.cohort = 'ADMIN';
-        studentData.cohortName = 'Administrator';
-        studentData.classYear = 'Staff';
-      } else {
-        studentData.cohort = cohortCode;
-        studentData.cohortName = VALID_COHORTS[cohortCode].name;
-        studentData.classYear = VALID_COHORTS[cohortCode].classYear;
-        studentData.progress = PROGRESS_TEMPLATE;
-      }
-
-      await db.collection('students').doc(cred.user.uid).set(studentData);
-
-      window.location.href = isAdminEmail ? 'admin.html' : 'dashboard.html';
+      window.location.href = 'dashboard.html';
     } catch (err) {
       errorEl.textContent = getErrorMessage(err.code);
       errorEl.style.display = 'block';

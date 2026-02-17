@@ -22,14 +22,6 @@ const VALID_COHORTS = {
   'YLASS2030': { name: 'Fourth Cohort', classYear: 'Class of 2030' }
 };
 
-// Admin emails
-const ADMIN_EMAILS = [
-  'kuotkiir@stanford.edu',
-  'kuotkiir@gmail.com',
-  'kuotkiir3@gmail.com',
-  'info@ylass.org'
-];
-
 // Progress checklist template with deadlines
 const PROGRESS_TEMPLATE = {
   'SAT Preparation': [

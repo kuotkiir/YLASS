@@ -85,6 +85,21 @@
             <p class="form-switch">Already have an account? <a href="#" id="showLogin">Log in</a></p>
           </form>
 
+          <!-- Email Verification Screen -->
+          <div id="verifyScreen" class="portal-form">
+            <div style="text-align:center;">
+              <div style="font-size:3rem;margin-bottom:16px;">&#9993;</div>
+              <h2 style="font-family:var(--font-heading);font-size:1.3rem;font-weight:700;color:var(--color-dark);margin-bottom:8px;">Verify Your Email</h2>
+              <p style="font-size:0.9rem;color:var(--color-text-secondary);margin-bottom:4px;">We sent a verification link to:</p>
+              <p style="font-size:0.95rem;font-weight:600;color:var(--color-dark);margin-bottom:20px;" id="verifyEmail"></p>
+              <p style="font-size:0.85rem;color:var(--color-text-muted);margin-bottom:24px;">Click the link in your email to verify your account. Check your spam folder if you don't see it.</p>
+              <div id="verifyMsg" style="display:none;margin-bottom:16px;padding:10px 14px;border-radius:var(--radius-sm);font-size:0.875rem;"></div>
+              <button class="btn-portal" id="checkVerification" style="margin-bottom:12px;">I've Verified My Email</button>
+              <p class="form-switch"><a href="#" id="resendVerification">Resend verification email</a></p>
+              <p class="form-switch"><a href="#" id="verifyLogout">Use a different account</a></p>
+            </div>
+          </div>
+
           <!-- Password Reset Form -->
           <form id="resetForm" class="portal-form">
             <div class="form-group">

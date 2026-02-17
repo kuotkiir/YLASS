@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentFilter = 'all';
 
   auth.onAuthStateChanged(async user => {
-    if (!user) {
+    if (!user || !user.emailVerified) {
       window.location.href = 'portal.html';
       return;
     }

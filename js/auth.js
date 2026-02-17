@@ -4,10 +4,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const loginForm = document.getElementById('loginForm');
   const signupForm = document.getElementById('signupForm');
   const resetForm = document.getElementById('resetForm');
+  const verifyScreen = document.getElementById('verifyScreen');
 
-  // Check if user is already logged in — redirect admins to admin page
+  // Check if user is already logged in
   auth.onAuthStateChanged(async user => {
     if (user) {
+      if (!user.emailVerified) {
+        // Show verification screen
+        loginForm.classList.remove('active');
+        signupForm.classList.remove('active');
+        resetForm.classList.remove('active');
+        verifyScreen.classList.add('active');
+        document.getElementById('verifyEmail').textContent = user.email;
+        return;
+      }
       try {
         const doc = await db.collection('students').doc(user.uid).get();
         if (doc.exists && doc.data().isAdmin) {
@@ -27,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.classList.remove('active');
     signupForm.classList.add('active');
     resetForm.classList.remove('active');
+    verifyScreen.classList.remove('active');
   });
 
   document.getElementById('showLogin').addEventListener('click', e => {
@@ -34,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     signupForm.classList.remove('active');
     loginForm.classList.add('active');
     resetForm.classList.remove('active');
+    verifyScreen.classList.remove('active');
   });
 
   document.getElementById('showReset').addEventListener('click', e => {
@@ -41,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.classList.remove('active');
     signupForm.classList.remove('active');
     resetForm.classList.add('active');
+    verifyScreen.classList.remove('active');
   });
 
   document.getElementById('showLoginFromReset').addEventListener('click', e => {
@@ -63,6 +76,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       const cred = await auth.signInWithEmailAndPassword(email, password);
+
+      // Check email verification
+      if (!cred.user.emailVerified) {
+        loginForm.classList.remove('active');
+        verifyScreen.classList.add('active');
+        document.getElementById('verifyEmail').textContent = cred.user.email;
+        btn.disabled = false;
+        btn.textContent = 'Log In';
+        return;
+      }
+
       const doc = await db.collection('students').doc(cred.user.uid).get();
       if (doc.exists && doc.data().isAdmin) {
         window.location.href = 'admin.html';
@@ -103,6 +127,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const cred = await auth.createUserWithEmailAndPassword(email, password);
       await cred.user.updateProfile({ displayName: name });
 
+      // Send verification email
+      await cred.user.sendEmailVerification();
+
       // Create student document in Firestore
       await db.collection('students').doc(cred.user.uid).set({
         name: name,
@@ -117,13 +144,68 @@ document.addEventListener('DOMContentLoaded', () => {
         lastActive: firebase.firestore.FieldValue.serverTimestamp()
       });
 
-      window.location.href = 'dashboard.html';
+      // Show verification screen
+      signupForm.classList.remove('active');
+      verifyScreen.classList.add('active');
+      document.getElementById('verifyEmail').textContent = email;
     } catch (err) {
       errorEl.textContent = getErrorMessage(err.code);
       errorEl.style.display = 'block';
       btn.disabled = false;
       btn.textContent = 'Create Account';
     }
+  });
+
+  // Resend verification email
+  document.getElementById('resendVerification').addEventListener('click', async e => {
+    e.preventDefault();
+    const msgEl = document.getElementById('verifyMsg');
+    const user = auth.currentUser;
+    if (!user) {
+      msgEl.textContent = 'Please log in first to resend verification.';
+      msgEl.className = 'form-error';
+      msgEl.style.display = 'block';
+      return;
+    }
+    try {
+      await user.sendEmailVerification();
+      msgEl.textContent = 'Verification email sent! Check your inbox.';
+      msgEl.className = 'form-success';
+      msgEl.style.display = 'block';
+    } catch (err) {
+      msgEl.textContent = 'Please wait a moment before requesting another email.';
+      msgEl.className = 'form-error';
+      msgEl.style.display = 'block';
+    }
+  });
+
+  // Check verification status
+  document.getElementById('checkVerification').addEventListener('click', async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+    await user.reload();
+    if (user.emailVerified) {
+      const doc = await db.collection('students').doc(user.uid).get();
+      if (doc.exists && doc.data().isAdmin) {
+        window.location.href = 'admin.html';
+      } else {
+        window.location.href = 'dashboard.html';
+      }
+    } else {
+      const msgEl = document.getElementById('verifyMsg');
+      msgEl.textContent = 'Email not yet verified. Please check your inbox and click the verification link.';
+      msgEl.className = 'form-error';
+      msgEl.style.display = 'block';
+    }
+  });
+
+  // Sign out from verify screen
+  document.getElementById('verifyLogout').addEventListener('click', e => {
+    e.preventDefault();
+    auth.signOut().then(() => {
+      verifyScreen.classList.remove('active');
+      loginForm.classList.add('active');
+    });
   });
 
   // Password Reset

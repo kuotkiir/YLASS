@@ -26,6 +26,7 @@ const VALID_COHORTS = {
 const ADMIN_EMAILS = [
   'kuotkiir@stanford.edu',
   'kuotkiir@gmail.com',
+  'kuotkiir3@gmail.com',
   'info@ylass.org'
 ];
 

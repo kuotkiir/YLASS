@@ -5,10 +5,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const signupForm = document.getElementById('signupForm');
   const resetForm = document.getElementById('resetForm');
 
-  // Check if user is already logged in
-  auth.onAuthStateChanged(user => {
+  // Check if user is already logged in — redirect admins to admin page
+  auth.onAuthStateChanged(async user => {
     if (user) {
-      window.location.href = 'dashboard.html';
+      try {
+        const doc = await db.collection('students').doc(user.uid).get();
+        if (doc.exists && doc.data().isAdmin) {
+          window.location.href = 'admin.html';
+        } else {
+          window.location.href = 'dashboard.html';
+        }
+      } catch (e) {
+        window.location.href = 'dashboard.html';
+      }
     }
   });
 
@@ -53,8 +62,13 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.textContent = 'Logging in...';
 
     try {
-      await auth.signInWithEmailAndPassword(email, password);
-      window.location.href = 'dashboard.html';
+      const cred = await auth.signInWithEmailAndPassword(email, password);
+      const doc = await db.collection('students').doc(cred.user.uid).get();
+      if (doc.exists && doc.data().isAdmin) {
+        window.location.href = 'admin.html';
+      } else {
+        window.location.href = 'dashboard.html';
+      }
     } catch (err) {
       errorEl.textContent = getErrorMessage(err.code);
       errorEl.style.display = 'block';
@@ -75,8 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     errorEl.style.display = 'none';
 
-    // Validate cohort code
-    if (!VALID_COHORTS[cohortCode]) {
+    const isAdminEmail = ADMIN_EMAILS.includes(email.toLowerCase());
+
+    // Validate cohort code (skip for admin emails)
+    if (!isAdminEmail && !VALID_COHORTS[cohortCode]) {
       errorEl.textContent = 'Invalid cohort code. Please check with your mentor.';
       errorEl.style.display = 'block';
       return;
@@ -89,21 +105,30 @@ document.addEventListener('DOMContentLoaded', () => {
       const cred = await auth.createUserWithEmailAndPassword(email, password);
       await cred.user.updateProfile({ displayName: name });
 
-      // Create student document in Firestore
-      await db.collection('students').doc(cred.user.uid).set({
+      // Create document in Firestore
+      const studentData = {
         name: name,
         email: email,
-        cohort: cohortCode,
-        cohortName: VALID_COHORTS[cohortCode].name,
-        classYear: VALID_COHORTS[cohortCode].classYear,
-        isAdmin: ADMIN_EMAILS.includes(email.toLowerCase()),
-        progress: PROGRESS_TEMPLATE,
+        isAdmin: isAdminEmail,
         notes: '',
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         lastActive: firebase.firestore.FieldValue.serverTimestamp()
-      });
+      };
 
-      window.location.href = 'dashboard.html';
+      if (isAdminEmail) {
+        studentData.cohort = 'ADMIN';
+        studentData.cohortName = 'Administrator';
+        studentData.classYear = 'Staff';
+      } else {
+        studentData.cohort = cohortCode;
+        studentData.cohortName = VALID_COHORTS[cohortCode].name;
+        studentData.classYear = VALID_COHORTS[cohortCode].classYear;
+        studentData.progress = PROGRESS_TEMPLATE;
+      }
+
+      await db.collection('students').doc(cred.user.uid).set(studentData);
+
+      window.location.href = isAdminEmail ? 'admin.html' : 'dashboard.html';
     } catch (err) {
       errorEl.textContent = getErrorMessage(err.code);
       errorEl.style.display = 'block';

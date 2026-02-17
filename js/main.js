@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollAnimations();
   initStatsCounter();
   initDarkMode();
+  initAdminNav();
 });
 
 // --- Navigation ---
@@ -172,4 +173,35 @@ function initDarkMode() {
 
   li.appendChild(btn);
   navLinks.appendChild(li);
+}
+
+// --- Admin Nav Link ---
+function initAdminNav() {
+  if (typeof auth === 'undefined' || typeof db === 'undefined') return;
+
+  const navLinks = document.getElementById('navLinks');
+  if (!navLinks) return;
+
+  // Don't add if already on admin page
+  if (navLinks.querySelector('a[href="admin.html"]')) return;
+
+  auth.onAuthStateChanged(async user => {
+    if (!user) return;
+    try {
+      const doc = await db.collection('students').doc(user.uid).get();
+      if (doc.exists && doc.data().isAdmin) {
+        const logoutLi = navLinks.querySelector('#navLogout');
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = 'admin.html';
+        a.textContent = 'Admin';
+        li.appendChild(a);
+        if (logoutLi && logoutLi.parentElement) {
+          navLinks.insertBefore(li, logoutLi.parentElement);
+        } else {
+          navLinks.appendChild(li);
+        }
+      }
+    } catch (e) {}
+  });
 }

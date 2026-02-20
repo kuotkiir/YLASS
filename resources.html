@@ -19,28 +19,36 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/portal.css">
 </head>
 <body>
-  <!-- Navigation -->
   <nav class="nav nav-solid" id="nav">
     <div class="nav-container">
       <a href="index.html" class="nav-logo">
-        <img src="images/ylass-logo.jpg" alt="YLASS — Young Leaders Academy of South Sudan" class="logo-img">
+        <img src="images/ylass-logo.jpg" alt="YLASS" class="logo-img">
       </a>
       <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">
         <span class="hamburger"></span>
       </button>
       <ul class="nav-links" id="navLinks">
-        <li><a href="index.html#about">About</a></li>
-        <li><a href="index.html#program">Program</a></li>
-        <li><a href="index.html#impact">Impact</a></li>
-        <li><a href="index.html#students">Students</a></li>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="schools.html">Schools</a></li>
         <li><a href="resources.html" class="active">Resources</a></li>
-        <li><a href="index.html#support">Support</a></li>
-        <li><a href="index.html#apply" class="nav-cta">Apply Now</a></li>
+        <li><a href="messages.html">Messages</a></li>
+        <li><a href="#" id="navLogout">Log Out</a></li>
       </ul>
     </div>
   </nav>
+
+  <!-- Loading State -->
+  <div id="loadingState" class="portal-loading">
+    <div class="spinner"></div>
+    <p>Loading resources...</p>
+  </div>
+
+  <div id="resourcesContent" style="display:none;">
 
   <!-- Page Hero -->
   <header class="page-hero">
@@ -738,47 +746,34 @@
     </div>
   </section>
 
-  <!-- Footer -->
+  </div><!-- /resourcesContent -->
+
   <footer class="footer">
     <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <img src="images/ylass-logo.jpg" alt="YLASS" class="footer-logo-img">
-          <p>Young Leaders Academy of South Sudan. Empowering the next generation of South Sudanese leaders through education.</p>
-        </div>
-        <div class="footer-links-group">
-          <h4>Quick Links</h4>
-          <ul>
-            <li><a href="index.html#about">About</a></li>
-            <li><a href="index.html#program">Program</a></li>
-            <li><a href="index.html#impact">Impact</a></li>
-            <li><a href="index.html#students">Students</a></li>
-            <li><a href="resources.html">Resources</a></li>
-          </ul>
-        </div>
-        <div class="footer-links-group">
-          <h4>Get Involved</h4>
-          <ul>
-            <li><a href="index.html#apply">Apply</a></li>
-            <li><a href="index.html#support">Support Us</a></li>
-            <li><a href="index.html#founders">Our Team</a></li>
-            <li><a href="mailto:info@ylass.org">Contact</a></li>
-          </ul>
-        </div>
-        <div class="footer-links-group">
-          <h4>Contact</h4>
-          <ul>
-            <li><a href="mailto:info@ylass.org">info@ylass.org</a></li>
-            <li>Juba, South Sudan</li>
-          </ul>
-        </div>
-      </div>
       <div class="footer-bottom">
         <p>&copy; 2026 Young Leaders Academy of South Sudan. All rights reserved.</p>
       </div>
     </div>
   </footer>
 
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
   <script src="js/main.js"></script>
+  <script>
+    auth.onAuthStateChanged(user => {
+      if (!user || !user.emailVerified) {
+        window.location.href = 'portal.html';
+        return;
+      }
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('resourcesContent').style.display = 'block';
+    });
+    document.getElementById('navLogout').addEventListener('click', e => {
+      e.preventDefault();
+      auth.signOut().then(() => window.location.href = 'portal.html');
+    });
+  </script>
 </body>
 </html>

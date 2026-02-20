@@ -144,9 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const cred = await auth.createUserWithEmailAndPassword(email, password);
       await cred.user.updateProfile({ displayName: name });
 
-      // Send verification email
-      await cred.user.sendEmailVerification();
-
       // Create student document in Firestore
       await db.collection('students').doc(cred.user.uid).set({
         name: name,
@@ -160,6 +157,13 @@ document.addEventListener('DOMContentLoaded', () => {
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         lastActive: firebase.firestore.FieldValue.serverTimestamp()
       });
+
+      // Send verification email (don't block signup if this fails)
+      try {
+        await cred.user.sendEmailVerification();
+      } catch (emailErr) {
+        console.warn('Verification email failed to send:', emailErr);
+      }
 
       // Show verification screen
       signupForm.classList.remove('active');
@@ -177,16 +181,19 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('resendVerification').addEventListener('click', async e => {
     e.preventDefault();
     const msgEl = document.getElementById('verifyMsg');
+    const resendBtn = document.getElementById('resendVerification');
     const user = auth.currentUser;
     if (!user) {
-      msgEl.textContent = 'Please log in first to resend verification.';
+      msgEl.textContent = 'Session expired. Please log in again.';
       msgEl.className = 'form-error';
       msgEl.style.display = 'block';
       return;
     }
+    resendBtn.disabled = true;
+    resendBtn.textContent = 'Sending...';
     try {
       await user.sendEmailVerification();
-      msgEl.textContent = 'Verification email sent! Check your inbox.';
+      msgEl.textContent = 'Verification email sent! Check your inbox and spam folder.';
       msgEl.className = 'form-success';
       msgEl.style.display = 'block';
     } catch (err) {
@@ -194,6 +201,8 @@ document.addEventListener('DOMContentLoaded', () => {
       msgEl.className = 'form-error';
       msgEl.style.display = 'block';
     }
+    resendBtn.disabled = false;
+    resendBtn.textContent = 'Resend Verification Email';
   });
 
   // Check verification status

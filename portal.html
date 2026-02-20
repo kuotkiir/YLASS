@@ -91,11 +91,15 @@
               <div style="font-size:3rem;margin-bottom:16px;">&#9993;</div>
               <h2 style="font-family:var(--font-heading);font-size:1.3rem;font-weight:700;color:var(--color-dark);margin-bottom:8px;">Verify Your Email</h2>
               <p style="font-size:0.9rem;color:var(--color-text-secondary);margin-bottom:4px;">We sent a verification link to:</p>
-              <p style="font-size:0.95rem;font-weight:600;color:var(--color-dark);margin-bottom:20px;" id="verifyEmail"></p>
-              <p style="font-size:0.85rem;color:var(--color-text-muted);margin-bottom:24px;">Click the link in your email to verify your account. Check your spam folder if you don't see it.</p>
+              <p style="font-size:0.95rem;font-weight:600;color:var(--color-dark);margin-bottom:12px;" id="verifyEmail"></p>
+              <div style="background:var(--color-bg-alt);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:24px;text-align:left;">
+                <p style="font-size:0.85rem;color:var(--color-text-secondary);margin-bottom:6px;">1. Check your <strong>Spam/Junk folder</strong> — the email comes from a firebaseapp.com address</p>
+                <p style="font-size:0.85rem;color:var(--color-text-secondary);margin-bottom:6px;">2. Click the verification link in the email</p>
+                <p style="font-size:0.85rem;color:var(--color-text-secondary);margin-bottom:0;">3. Come back here and click the button below</p>
+              </div>
               <div id="verifyMsg" style="display:none;margin-bottom:16px;padding:10px 14px;border-radius:var(--radius-sm);font-size:0.875rem;"></div>
               <button class="btn-portal" id="checkVerification" style="margin-bottom:12px;">I've Verified My Email</button>
-              <p class="form-switch"><a href="#" id="resendVerification">Resend verification email</a></p>
+              <button class="btn-portal" id="resendVerification" style="margin-bottom:12px;background:transparent;color:var(--color-brand-deeper);border:1.5px solid var(--color-brand-dark);">Resend Verification Email</button>
               <p class="form-switch"><a href="#" id="verifyLogout">Use a different account</a></p>
             </div>
           </div>

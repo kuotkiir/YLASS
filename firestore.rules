@@ -9,8 +9,8 @@ service cloud.firestore {
       allow read, update: if request.auth != null && isAdmin();
     }
     match /messages/{messageId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
+      allow read: if request.auth != null && (resource.data.studentUid == request.auth.uid || isAdmin());
+      allow create: if request.auth != null && (request.resource.data.studentUid == request.auth.uid || isAdmin());
     }
     match /applications/{appId} {
       allow create: if true;

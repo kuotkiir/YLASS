@@ -71,6 +71,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('loginBtn');
 
     errorEl.style.display = 'none';
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      errorEl.textContent = 'Please enter a valid email address.';
+      errorEl.style.display = 'block';
+      return;
+    }
+
     btn.disabled = true;
     btn.textContent = 'Logging in...';
 
@@ -112,6 +121,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('signupBtn');
 
     errorEl.style.display = 'none';
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      errorEl.textContent = 'Please enter a valid email address.';
+      errorEl.style.display = 'block';
+      return;
+    }
 
     // Validate cohort code
     if (!VALID_COHORTS[cohortCode]) {
@@ -181,22 +198,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Check verification status
   document.getElementById('checkVerification').addEventListener('click', async () => {
+    const msgEl = document.getElementById('verifyMsg');
+    const btn = document.getElementById('checkVerification');
     const user = auth.currentUser;
-    if (!user) return;
-    await user.reload();
-    if (user.emailVerified) {
-      const doc = await db.collection('students').doc(user.uid).get();
-      if (doc.exists && doc.data().isAdmin) {
-        window.location.href = 'admin.html';
+    if (!user) {
+      msgEl.textContent = 'Session expired. Please log in again.';
+      msgEl.className = 'form-error';
+      msgEl.style.display = 'block';
+      setTimeout(() => {
+        verifyScreen.classList.remove('active');
+        loginForm.classList.add('active');
+      }, 1500);
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Checking...';
+
+    try {
+      await user.reload();
+      const freshUser = auth.currentUser;
+      if (freshUser && freshUser.emailVerified) {
+        const doc = await db.collection('students').doc(freshUser.uid).get();
+        if (doc.exists && doc.data().isAdmin) {
+          window.location.href = 'admin.html';
+        } else {
+          window.location.href = 'dashboard.html';
+        }
       } else {
-        window.location.href = 'dashboard.html';
+        msgEl.textContent = 'Email not yet verified. Please check your inbox and click the verification link.';
+        msgEl.className = 'form-error';
+        msgEl.style.display = 'block';
       }
-    } else {
-      const msgEl = document.getElementById('verifyMsg');
-      msgEl.textContent = 'Email not yet verified. Please check your inbox and click the verification link.';
+    } catch (err) {
+      msgEl.textContent = 'Could not check verification status. Please try again.';
       msgEl.className = 'form-error';
       msgEl.style.display = 'block';
     }
+
+    btn.disabled = false;
+    btn.textContent = "I've Verified My Email";
   });
 
   // Sign out from verify screen
